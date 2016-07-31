@@ -2,10 +2,11 @@ defmodule CoberturaCover do
   # ============ private functions
   defp cover_modules(module_filters) when is_map(module_filters) do
     Enum.flat_map(module_filters[:include], fn(expr) ->
-      regex = "^#{expr}"
+      regex = "^Elixir.#{expr}"
         |> String.replace(".", "\\.")
         |> String.replace("*", ".*")
         |> Regex.compile
+        |> elem(1)
 
       for m <- :cover.modules, do: String.match?("#{m}", regex)
     end)
