@@ -39,6 +39,7 @@ defmodule CoberturaCover do
     functions
     |> Stream.map(&elem(&1, 0))
     |> Stream.map(fn {_m, f, a} ->
+      IO.puts "------- methods -> f: #{inspect f}, a: #{inspect a}"
       # <method name="main" signature="([Ljava/lang/String;)V" line-rate="1.0" branch-rate="1.0">
       {:method, [name: to_string(f), signature: "", 'line-rate': 0, 'branch-rate': 0], []}
     end)
@@ -47,6 +48,8 @@ defmodule CoberturaCover do
 
   defp lines(mod) do
     {:ok, lines} = :cover.analyse(mod, :calls, :line)
+
+    IO.puts "------- lines: #{inspect lines}"
 
     lines
     |> Stream.filter(fn {{_m, line}, _hits} -> line != 0 end)
