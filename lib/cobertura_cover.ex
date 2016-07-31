@@ -34,7 +34,7 @@ defmodule CoberturaCover do
   end
 
   defp methods(mod) do
-    {:ok, functions} = :cover.analyse(mod, :calls, :function)
+    {:ok, functions} = :cover.analyse(mod, :coverage, :function)
 
     functions
     |> Stream.map(&elem(&1, 0))
@@ -47,7 +47,7 @@ defmodule CoberturaCover do
   end
 
   defp lines(mod) do
-    {:ok, lines} = :cover.analyse(mod, :calls, :line)
+    {:ok, lines} = :cover.analyse(mod, :coverage, :line)
 
     IO.puts "------- lines: #{inspect lines}"
 
