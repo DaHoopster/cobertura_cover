@@ -8,7 +8,7 @@ defmodule CoberturaCover do
         |> Regex.compile
         |> elem(1)
 
-      for m <- :cover.modules, do: String.match?("#{m}", regex)
+      Enum.filter(:cover.modules, fn(mod) -> String.match?("#{mod}", regex) end)
     end)
   end
   defp cover_modules(_), do: :cover.modules
