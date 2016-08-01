@@ -37,13 +37,15 @@ defmodule CoberturaCover do
     {:ok, functions} = :cover.analyse(mod, :coverage, :function)
     IO.puts "------- methods -> f: #{inspect functions}"
 
-    functions
-    |> Stream.map(&elem(&1, 0))
-    |> Stream.map(fn {_m, f, a} ->
-      # <method name="main" signature="([Ljava/lang/String;)V" line-rate="1.0" branch-rate="1.0">
-      {:method, [name: to_string(f), signature: "", 'line-rate': 0, 'branch-rate': 0], []}
-    end)
-    |> Enum.to_list
+    Enum.filter_map(
+      functions,
+      fn({{_, fn_name, _}, _}) ->
+        !String.match?("#{fn_name}", ~r{^__.*})
+      end,
+      fn({{_, fn_name, fn_arity}, {lines_covered, lines_uncovered}}) ->
+        {:method, [name: "#{fn_name}", signature: "#{fn_name}/#{fn_arity}", "line-rate": lines_covered / (lines_covered + lines_uncovered), "branch-rate": 0], []}
+      end
+    )
   end
 
   defp lines(mod) do
@@ -53,7 +55,7 @@ defmodule CoberturaCover do
 
     lines
     |> Stream.filter(fn {{_m, line}, _hits} -> line != 0 end)
-    |> Enum.map(fn {{_m, line}, hits} ->
+    |> Enum.map(fn {{_m, line}, {hits, _}} ->
       # <line branch="false" hits="21" number="76"/>
       {:line, [branch: false, hits: hits, number: line], []}
     end)
