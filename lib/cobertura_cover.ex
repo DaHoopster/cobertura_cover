@@ -103,18 +103,18 @@ defmodule CoberturaCover do
     ]
 
     root = {:coverage, [
-        timestamp: timestamp(),
-        "line-rate": 0,
-        "lines-covered": 0,
-        "lines-valid": 0,
-        "branch-rate": 0,
-        "branches-covered": 0,
-        "branches-valid": 0,
-        complexity: 0,
-        version: "1.9",
+        {:timestamp, timestamp()},
+        {:"line-rate", 0},
+        {:"lines-covered", 0},
+        {:"lines-valid", 0},
+        {:"branch-rate", 0},
+        {:"branches-covered", 0},
+        {:"branches-valid", 0},
+        {:complexity, 0},
+        {:version, "1.9"},
       ], [
         sources: [],
-        packages: packages(modules_to_cover),
+        packages: []
       ]
     }
 
