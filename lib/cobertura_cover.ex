@@ -44,8 +44,6 @@ defmodule CoberturaCover do
         !String.match?("#{fn_name}", ~r{^__.*})
       end,
       fn({{_, fn_name, fn_arity}, {lines_covered, lines_uncovered}}) ->
-        IO.puts "--------- fn_name: #{fn_name}, covered: #{lines_covered}, uncovered: #{lines_uncovered}"
-
         {:method, [name: "#{fn_name}", signature: "#{fn_name}/#{fn_arity}", "line-rate": lines_covered / (lines_covered + lines_uncovered), "branch-rate": 0], []}
       end
     )
@@ -99,8 +97,6 @@ defmodule CoberturaCover do
   def generate_cobertura(modules_to_cover) when is_list(modules_to_cover) do
     Mix.shell.info "\nGenerating cobertura.xml... "
 
-
-
     prolog = [
       ~s(<?xml version="1.0" encoding="utf-8"?>\n),
       ~s(<!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">\n)
@@ -108,12 +104,12 @@ defmodule CoberturaCover do
 
     root = {:coverage, [
         timestamp: timestamp(),
-        'line-rate': 0,
-        'lines-covered': 0,
-        'lines-valid': 0,
-        'branch-rate': 0,
-        'branches-covered': 0,
-        'branches-valid': 0,
+        "line-rate": 0,
+        "lines-covered": 0,
+        "lines-valid": 0,
+        "branch-rate": 0,
+        "branches-covered": 0,
+        "branches-valid": 0,
         complexity: 0,
         version: "1.9",
       ], [
@@ -121,6 +117,8 @@ defmodule CoberturaCover do
         packages: packages(modules_to_cover),
       ]
     }
+
+    IO.puts "----------- root: #{inspect root}"
     report = :xmerl.export_simple([root], :xmerl_xml, prolog: prolog)
     File.write("coverage.xml", report)
   end
