@@ -21,11 +21,14 @@ defmodule CoberturaCover do
         #  filename="PSPDFKit/PSPDFConfiguration.m" line-rate="0.976377952756"
         #  name="PSPDFConfiguration_m">
 
+        {:ok, module_analytics} = :cover.analyse(mod, :coverage, :module)
+        IO.puts "---------- module: #{module_analytics}"
+
         {:class,
           [
             name: inspect(mod),
             filename: Path.relative_to_cwd(mod.module_info(:compile)[:source]),
-            'line-rate': 0, 'branch-rate': 0, complexity: 1,
+            "line-rate": 0, "branch-rate": 0, complexity: 1,
           ],
           [methods: methods(mod), lines: lines(mod)]
         }
@@ -35,7 +38,6 @@ defmodule CoberturaCover do
 
   defp methods(mod) do
     {:ok, functions} = :cover.analyse(mod, :coverage, :function)
-    IO.puts "------- methods -> f: #{inspect functions}"
 
     Enum.filter_map(
       functions,
@@ -43,6 +45,8 @@ defmodule CoberturaCover do
         !String.match?("#{fn_name}", ~r{^__.*})
       end,
       fn({{_, fn_name, fn_arity}, {lines_covered, lines_uncovered}}) ->
+        IO.puts "--------- fn_name: #{fn_name}, covered: #{lines_covered}, uncovered: #{lines_uncovered}"
+
         {:method, [name: "#{fn_name}", signature: "#{fn_name}/#{fn_arity}", "line-rate": lines_covered / (lines_covered + lines_uncovered), "branch-rate": 0], []}
       end
     )
@@ -51,14 +55,12 @@ defmodule CoberturaCover do
   defp lines(mod) do
     {:ok, lines} = :cover.analyse(mod, :coverage, :line)
 
-    IO.puts "------- lines: #{inspect lines}"
-
     lines
-    |> Stream.filter(fn {{_m, line}, _hits} -> line != 0 end)
-    |> Enum.map(fn {{_m, line}, {hits, _}} ->
-      # <line branch="false" hits="21" number="76"/>
-      {:line, [branch: false, hits: hits, number: line], []}
-    end)
+      |> Stream.filter(fn {{_m, line}, _hits} -> line != 0 end)
+      |> Enum.map(fn {{_m, line}, {hits, _}} ->
+        # <line branch="false" hits="21" number="76"/>
+        {:line, [branch: false, hits: hits, number: line], []}
+      end)
   end
 
   defp timestamp do
