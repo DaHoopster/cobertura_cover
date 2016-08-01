@@ -21,14 +21,13 @@ defmodule CoberturaCover do
         #  filename="PSPDFKit/PSPDFConfiguration.m" line-rate="0.976377952756"
         #  name="PSPDFConfiguration_m">
 
-        {:ok, module_analytics} = :cover.analyse(mod, :coverage, :module)
-        IO.puts "---------- module: #{module_analytics}"
+        {:ok, {_, {lines_covered, lines_uncovered}}} = :cover.analyse(mod, :coverage, :module)
 
         {:class,
           [
             name: inspect(mod),
             filename: Path.relative_to_cwd(mod.module_info(:compile)[:source]),
-            "line-rate": 0, "branch-rate": 0, complexity: 1,
+            "line-rate": lines_covered / (lines_covered + lines_uncovered), "branch-rate": 0, complexity: 1,
           ],
           [methods: methods(mod), lines: lines(mod)]
         }
