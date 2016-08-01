@@ -103,22 +103,22 @@ defmodule CoberturaCover do
     ]
 
     root = {:coverage, [
-        {:timestamp, timestamp()},
-        {:"line-rate", 0},
-        {:"lines-covered", 0},
-        {:"lines-valid", 0},
-        {:"branch-rate", 0},
-        {:"branches-covered", 0},
-        {:"branches-valid", 0},
-        {:complexity, 0},
-        {:version, "1.9"},
+        timestamp: timestamp(),
+        "line-rate": 0,
+        "lines-covered": 0,
+        "lines-valid": 0,
+        "branch-rate": 0,
+        "branches-covered": 0,
+        "branches-valid": 0,
+        complexity: 0,
+        version: "1.9",
       ], [
         sources: [],
         packages: []
       ]
     }
 
-    IO.puts "----------- root: #{inspect root}"
+    IO.puts "----------- root: #{inspect packages(modules_to_cover)}"
     report = :xmerl.export_simple([root], :xmerl_xml, prolog: prolog)
     File.write("coverage.xml", report)
   end
