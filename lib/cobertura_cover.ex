@@ -14,7 +14,7 @@ defmodule CoberturaCover do
   defp cover_modules(_), do: :cover.modules
 
   defp packages(modules) do
-    [{:package, [name: "", 'line-rate': 0, 'branch-rate': 0, complexity: 1], [
+    [{:package, [name: "", "line-rate": 0, "branch-rate": 0, complexity: 1], [
       classes: Enum.map(modules, fn mod ->
         class_name = inspect(mod)
         # <class branch-rate="0.634920634921" complexity="0.0"
@@ -27,7 +27,9 @@ defmodule CoberturaCover do
           [
             name: inspect(mod),
             filename: Path.relative_to_cwd(mod.module_info(:compile)[:source]),
-            "line-rate": lines_covered / (lines_covered + lines_uncovered), "branch-rate": 0, complexity: 1,
+            "line-rate": "#{lines_covered / (lines_covered + lines_uncovered)}",
+            "branch-rate": 0,
+            complexity: 1
           ],
           [methods: methods(mod), lines: lines(mod)]
         }
@@ -44,7 +46,7 @@ defmodule CoberturaCover do
         !String.match?("#{fn_name}", ~r{^__.*})
       end,
       fn({{_, fn_name, fn_arity}, {lines_covered, lines_uncovered}}) ->
-        {:method, [name: "#{fn_name}", signature: "#{fn_name}/#{fn_arity}", "line-rate": lines_covered / (lines_covered + lines_uncovered), "branch-rate": 0], []}
+        {:method, [name: "#{fn_name}", signature: "#{fn_name}/#{fn_arity}", "line-rate": "#{lines_covered / (lines_covered + lines_uncovered)}", "branch-rate": 0], []}
       end
     )
   end
@@ -114,11 +116,10 @@ defmodule CoberturaCover do
         version: "1.9",
       ], [
         sources: [],
-        packages: []
+        packages: packages(modules_to_cover)
       ]
     }
 
-    IO.puts "----------- root: #{inspect packages(modules_to_cover)}"
     report = :xmerl.export_simple([root], :xmerl_xml, prolog: prolog)
     File.write("coverage.xml", report)
   end
